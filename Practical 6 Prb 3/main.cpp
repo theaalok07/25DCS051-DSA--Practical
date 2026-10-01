@@ -1,156 +1,89 @@
 #include <iostream>
-#include <string>
-#include <cctype>
 using namespace std;
 
-char stack[100];
+#define MAX 5
+
+int trays[MAX];
 int top=-1;
 
-void push(char value)
+void push(int tray)
 {
-    top++;
-    stack[top]=value;
+    if(top==MAX-1)
+    {
+        cout<<"Error: Stack is full."<<endl;
+    }
+    else
+    {
+        top++;
+        trays[top]=tray;
+        cout<<"Tray placed."<<endl;
+    }
 }
 
-char pop()
+void pop()
 {
-    char value=stack[top];
-    top--;
-    return value;
+    if(top==-1)
+    {
+        cout<<"Error: Stack is empty."<<endl;
+    }
+    else
+    {
+        cout<<"Tray taken: "<<trays[top]<<endl;
+        top--;
+    }
 }
 
-char peek()
+void display()
 {
-    return stack[top];
-}
-
-int precedence(char op)
-{
-    if(op=='+' || op=='-')
+    if(top==-1)
     {
-        return 1;
-    }
-    else if(op=='*' || op=='/')
-    {
-        return 2;
-    }
-    else if(op=='^')
-    {
-        return 3;
+        cout<<"Stack is empty."<<endl;
+        return;
     }
 
-    return 0;
-}
+    cout<<"Current stack: ";
 
-string infixToPostfix(string infix)
-{
-    string postfix="";
-
-    for(int i=0;i<infix.length();i++)
+    for(int i=top;i>=0;i--)
     {
-        char ch=infix[i];
-
-        if(isdigit(ch))
-        {
-            postfix+=ch;
-        }
-        else if(ch=='(')
-        {
-            push(ch);
-        }
-        else if(ch==')')
-        {
-            while(top!=-1 && peek()!='(')
-            {
-                postfix+=pop();
-            }
-
-            pop();
-        }
-        else
-        {
-            while(top!=-1 && precedence(peek())>=precedence(ch))
-            {
-                postfix+=pop();
-            }
-
-            push(ch);
-        }
+        cout<<trays[i]<<" ";
     }
 
-    while(top!=-1)
-    {
-        postfix+=pop();
-    }
-
-    return postfix;
-}
-
-int calculate(int a,int b,char op)
-{
-    if(op=='+')
-    {
-        return a+b;
-    }
-    else if(op=='-')
-    {
-        return a-b;
-    }
-    else if(op=='*')
-    {
-        return a*b;
-    }
-    else if(op=='/')
-    {
-        return a/b;
-    }
-
-    return 0;
-}
-
-int evaluatePostfix(string postfix)
-{
-    int values[100];
-    int valueTop=-1;
-
-    for(int i=0;i<postfix.length();i++)
-    {
-        char ch=postfix[i];
-
-        if(isdigit(ch))
-        {
-            valueTop++;
-            values[valueTop]=ch-'0';
-        }
-        else
-        {
-            int b=values[valueTop];
-            valueTop--;
-
-            int a=values[valueTop];
-            valueTop--;
-
-            int result=calculate(a,b,ch);
-
-            valueTop++;
-            values[valueTop]=result;
-        }
-    }
-
-    return values[valueTop];
+    cout<<endl;
 }
 
 int main()
 {
-    string infix;
+    int choice;
+    int tray;
 
-    cout<<"Enter infix expression: ";
-    cin>>infix;
+    do
+    {
+        cout<<"\n1. Place tray"<<endl;
+        cout<<"2. Take tray"<<endl;
+        cout<<"3. Display stack"<<endl;
+        cout<<"4. Exit"<<endl;
 
-    string postfix=infixToPostfix(infix);
+        cout<<"Enter choice: ";
+        cin>>choice;
 
-    cout<<"Postfix expression: "<<postfix<<endl;
-    cout<<"Result: "<<evaluatePostfix(postfix)<<endl;
+        if(choice==1)
+        {
+            cout<<"Enter tray number: ";
+            cin>>tray;
+            push(tray);
+            display();
+        }
+        else if(choice==2)
+        {
+            pop();
+            display();
+        }
+        else if(choice==3)
+        {
+            display();
+        }
+
+    }while(choice!=4);
 
     return 0;
 }
